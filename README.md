@@ -7,7 +7,7 @@ Arduino code for the 2.5 axis draw bot I've been working on recently. Takes comm
   That is your key to type or send the next command. The arduino will immediately send another `CMDREQUST` until  
   the **commandBuffer** (CommandBuffer class, cmd library) has stored 10 commands. This allows you to input more commands while the first command is still running.
 
-**To avoid too many string -> floating point conversions on the arduino, all numerical command arguments (with the exception of the "SPEED" Command) should be "distance in mm * 100". This allows you to use up to 1/100th of a mm for precision, while keeping the code clean and free of decimal places or scientific notation**
+**To avoid too many string -> floating point conversions on the arduino, all distance related numerical command arguments (SPEED and STEPLEN commands have a different input) should be "distance in mm * 100". This allows you to use up to 1/100th of a mm for precision, while keeping the code clean and free of decimal places or scientific notation**
 
 ## Valid Commands are in the following format:
 
