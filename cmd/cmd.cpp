@@ -1,5 +1,5 @@
 /*
-  cmd.cpp - Library for a string buffer with push pop methods.
+  cmd.cpp - Library for a string buffer with enQueue and deQueue methods.
 */
 
 #include "Arduino.h"
@@ -15,7 +15,7 @@ bool CommandBuffer::available()
   return (_count > 0);
 }
 
-void CommandBuffer::pop(String & cmd0, String & cmd1, String & cmd2)
+void CommandBuffer::deQueue(String & cmd0, String & cmd1, String & cmd2)
 {
   cmd0 = _buffer[0][0];
   cmd1 = _buffer[0][1];
@@ -30,7 +30,7 @@ void CommandBuffer::pop(String & cmd0, String & cmd1, String & cmd2)
   }
 }
 
-bool CommandBuffer::push(String cmd0, String cmd1, String cmd2)
+bool CommandBuffer::enQueue(String cmd0, String cmd1, String cmd2)
 {
   if (_count < 10){
     _buffer[_count][0] = cmd0;
@@ -42,7 +42,7 @@ bool CommandBuffer::push(String cmd0, String cmd1, String cmd2)
     return false;
 }
 
-bool CommandBuffer::canPush()
+bool CommandBuffer::canEnQueue()
 {
   if (_count < 10){
     return true;

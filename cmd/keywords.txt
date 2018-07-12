@@ -1,5 +1,5 @@
 CommandBuffer	KEYWORD1
-push		KEYWORD2
-canPush		KEYWORD2
+enQueue		KEYWORD2
+canEnQueue	KEYWORD2
 available	KEYWORD2
-pop		KEYWORD2
+deQueue		KEYWORD2

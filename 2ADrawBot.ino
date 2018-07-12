@@ -116,7 +116,7 @@ void loop(){
 void parseCommand(){
   //Serial.println("parsing cmd");
   String cmd[3];
-  cmdBuffer.pop(cmd[0], cmd[1], cmd[2]);
+  cmdBuffer.deQueue(cmd[0], cmd[1], cmd[2]);
   
   cmd[0].toUpperCase();
   
@@ -329,7 +329,7 @@ void runCommandsFromBuffer(){
 }
 
 void requestCommand() {
-  if (cmdBuffer.canPush() && sendRequest){
+  if (cmdBuffer.canEnQueue() && sendRequest){
     Serial.println("CMDREQUEST");
     sendRequest = false;
   }
@@ -338,7 +338,7 @@ void requestCommand() {
 void readSerial() {
   // Read serial input:
   //return if the buffer is full
-  if (!cmdBuffer.canPush()){
+  if (!cmdBuffer.canEnQueue()){
     return;
   }
   while (Serial.available() > 0) {
@@ -355,7 +355,7 @@ void readSerial() {
     // if you get a newline, print the string,
     // then the string's value as a float:
     else {
-      cmdBuffer.push(
+      cmdBuffer.enQueue(
         splitValue(serialString,' ',0),
         splitValue(serialString,' ',1),
         splitValue(serialString,' ',2)

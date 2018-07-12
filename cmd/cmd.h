@@ -1,5 +1,5 @@
 /*
-  cmd.h - Library for a string buffer with push pop methods.
+  cmd.h - Library for a string buffer with enQueue and deQueue methods.
 */
 #ifndef cmd_h
 #define cmd_h
@@ -11,9 +11,9 @@ class CommandBuffer
   public:
     CommandBuffer();
     bool available();
-    void pop(String & cmd0, String & cmd1, String & cmd2);
-    bool push(String cmd0, String cmd1, String cmd2);
-    bool canPush();
+    void deQueue(String & cmd0, String & cmd1, String & cmd2);
+    bool enQueue(String cmd0, String cmd1, String cmd2);
+    bool canEnQueue();
   private:
     String _buffer[10][3];
     unsigned int _count;
