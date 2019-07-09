@@ -14,6 +14,7 @@
 #include <cmd.h>
 #include <AccelStepper.h>
 #include <MultiStepper.h>
+#include <Servo.h>
 
 //IO pins
 #define PIN_INPUT1 A0
@@ -21,14 +22,20 @@
 #define PIN_INPUT3 A2
 #define PIN_INPUT4 A3
 #define PIN_INPUT5 A6
+
 #define M_ON 0
 #define M_OFF 1
+
 #define PIN_M1Enable 10
 #define PIN_M1Step 9
 #define PIN_M1Dir 8
 #define PIN_M2Enable 7
 #define PIN_M2Step 6
 #define PIN_M2Dir 5
+
+#define PIN_SERVO 3
+#define SERVO_UP 100
+#define SERVO_DOWN 0
 
 //Serial Vars
 String serialString = "";
@@ -41,9 +48,9 @@ int speed[2] = {stepperSpeed,stepperSpeed};
 
 
 //Measurement vars
-//X Motor is a 1.8' nema 17 with GT2 belt and 16t pulley
-//Y Motor is an 18' mini geared stepper at a 1/36 reduction (same pulley)
-float stepsPerMM[2] = {50.0,22.5};
+//X Motor is a 1.8' nema 17 with GT2 belt and 16t pulley on 1/8 microstep
+//Y Motor is an 18' mini geared stepper at a 1/36 reduction (same pulley) on 1/2 microstep
+float stepsPerMM[2] = {50.0,45.0};
 bool hasLimits = false;
 float input_limitX = 400;
 float input_limitY = 200;
@@ -58,6 +65,9 @@ float slopY = 0;
 bool xDir = false;
 bool yDir = false;
 
+//Servo Vars
+Servo servo;
+int servoPosition = SERVO_UP;
 
 long endStop = 9999999999;
 long startStop = -9999999999;
@@ -79,6 +89,10 @@ void setup()
 //MOTOR 2 
   pinMode(PIN_M2Enable, OUTPUT);  //#PIN_ENABLE
   digitalWrite(PIN_M2Enable, M_ON);
+  
+//SERVO
+  servo.attach(PIN_SERVO);
+  servo.write(SERVO_UP);
 
 //INPUTS
   pinMode(PIN_INPUT1, INPUT_PULLUP);  //#PIN_0
@@ -88,13 +102,13 @@ void setup()
   pinMode(PIN_INPUT5, INPUT);  //#PIN_6
 
   stepperY.setMaxSpeed(stepperSpeed);
-  stepperY.setAcceleration(5000);
+  stepperY.setAcceleration(4000);
   stepperY.setEnablePin(PIN_M1Enable);
   stepperY.setPinsInverted(true,false,true);
   stepperY.disableOutputs();
   
   stepperX.setMaxSpeed(stepperSpeed);
-  stepperX.setAcceleration(5000);
+  stepperX.setAcceleration(4000);
   stepperX.setEnablePin(PIN_M2Enable);
   stepperX.setPinsInverted(false,false,true);
   stepperY.disableOutputs();
@@ -189,6 +203,21 @@ void parseCommand(){
   //turn stepper outputs on manually
   if (cmd[0] == "ON"){
     steppersOn();
+  }
+
+  //Lift Z Axis
+  if (cmd[0] == "LIFT"){
+    liftServo();
+  }
+
+  //Drop Z Axis
+  if (cmd[0] == "DROP"){
+    dropServo();
+  }
+
+  //Toggle Z Axis
+  if (cmd[0] == "ZCHANGE"){
+    toggleServo();
   }
 
   //Turn off steppers if we're out of commands
@@ -325,6 +354,31 @@ void recalculateDistance(){
   slopX = input_slopX * stepsPerMM[0];
   slopY = input_slopY * stepsPerMM[1];
 }
+
+/////////////////////////////////////////
+//SERVO FUNCTIONS
+/////////////////////////////////////////
+
+void liftServo(){
+  servoPosition = SERVO_UP;
+  servo.write(servoPosition);
+}
+
+void dropServo(){
+  servoPosition = SERVO_DOWN;
+  servo.write(servoPosition);
+}
+
+void toggleServo(){
+  if (servoPosition == SERVO_UP){
+    servoPosition == SERVO_DOWN; 
+  }
+  else {
+    servoPosition == SERVO_UP; 
+  }
+  servo.write(servoPosition);
+}
+
 
 /////////////////////////////////////////
 //SERIAL FUNCTIONS
