@@ -41,10 +41,12 @@ int speed[2] = {stepperSpeed,stepperSpeed};
 
 
 //Measurement vars
-float stepsPerMM[2] = {23.2558,64.5161};
+//X Motor is a 1.8' nema 17 with GT2 belt and 16t pulley
+//Y Motor is an 18' mini geared stepper at a 1/36 reduction (same pulley)
+float stepsPerMM[2] = {50.0,22.5};
 bool hasLimits = false;
-float input_limitX = 200;
-float input_limitY = 110;
+float input_limitX = 400;
+float input_limitY = 200;
 float limitX = 0;
 float limitY = 0;
 
@@ -199,6 +201,13 @@ void parseCommand(){
 //MOTOR FUNCTIONS AND SETTINGS
 /////////////////////////////////////////
 
+float getNewX(int x) {
+  return (x / 100.0)*stepsPerMM[0]; 
+}
+float getNewY(int y) {
+  return (y / 100.0)*stepsPerMM[1]; 
+}
+
 //Move to position, only turn motors off if command buffer is empty
 void startMovement(bool relative, int x, int y) {
 //  long oldX = positions[0];
@@ -207,12 +216,12 @@ void startMovement(bool relative, int x, int y) {
 //  float slopModifierY;
   
   if (relative) {
-    positions[0] = (stepperX.currentPosition()+(x / 100.0)*stepsPerMM[0]);
-    positions[1] = (stepperY.currentPosition()+(y / 100.0)*stepsPerMM[1]);
+    positions[0] = (stepperX.currentPosition()+getNewX(x));
+    positions[1] = (stepperY.currentPosition()+getNewY(y));
     }
   else {
-    positions[0] = (x / 100.0)*stepsPerMM[0];
-    positions[1] = (y / 100.0)*stepsPerMM[1];
+    positions[0] = getNewX(x);
+    positions[1] = getNewY(y);
   }
 
 //  //check Slop
@@ -360,7 +369,9 @@ void readSerial() {
         splitValue(serialString,' ',1),
         splitValue(serialString,' ',2)
       );
-      Serial.println("ACK: " + serialString);
+      
+      //Trying to cut the amount of Serial Commands in file. this slows things down
+      //Serial.println("ACK: " + serialString);
       serialString = "";
       sendRequest = true;
     }
