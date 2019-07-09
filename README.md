@@ -34,8 +34,14 @@ Arduino code for the 2.5 axis draw bot I've been working on recently. Takes comm
 * **SPEED** : Sets the maximum speed in steps per second. **This is the only command that takes areguments as integers.**
   * Example:"`SPEED 600 400`" Sets speed on X axis to max 600 steps per second, and speed on Y axis to max 400 steps per second.
   
-* **LIFT** : Activate Servo to Lift pen. Not yet implemented.
+* **LIFT** : Activate Servo to Lift pen. Servo 'UP' position defined in code as SERVO_UP
   * Example:"`LIFT`"
+  
+* **DROP** : Activate Servo to Drop pen. Servo 'DOWN' position defined in code as SERVO_DOWN
+  * Example:"`DROP`"
+  
+* **ZCHANGE** : Toggles Servo position between up and down.
+  * Example:"`ZCHANGE`"
   
 * **LIMITS** : Set x and y limits (dimensions) of draw area defaults are 200mm X by 100mm Y
   * Example:"`LIMITS 20000 10000`" Sets the size of the draw area and limits maximum travel to 200mm X by 100mm Y
@@ -60,19 +66,34 @@ Arduino code for the 2.5 axis draw bot I've been working on recently. Takes comm
 
 
 ```LIMITS 20000 10000  
-SPEED 600 400  
+SPEED 600 400
+LIFT
 HOME  
+DROP
 MR 1000 1000  
 MA 2000 1000  
 MA 2000 2000  
 MA 1000 2000  
 MA 1000 1000  
+LIFT
 MA 0 0  
 ```
 
-1. Limits draw area to 200mmX by 100mmY
-2. Sets max speed to 600 steps per second X and 400 steps per second Y
-3. Home carriage until endstops are hit, then go to (0,0)
-4. Move Right (X+) 10mm, and Down (Y+) 10mm
-5. Lines 5 through 8 draw a 1cm Square
-* Last line moves back to (0,0), motors will be turned off automatically.
+**LINE 1** - Limits draw area to 200mmX by 100mmY
+
+**LINE 2** - Sets max speed to 600 steps per second X and 400 steps per second Y
+
+**LINE 3** - Lifts pen off of paper
+
+**LINE 4** - Home carriage until endstops are hit, then go to (0,0)
+
+**LINE 5** - Lowers pen on to paper
+
+**LINE 6** - Move Right (X+) 10mm, and Down (Y+) 10mm
+
+**LINE 7..10** - Lines 7 through 10 draw a 1cm Square
+
+**LINE 11** - Lifts pen off of paper
+
+**LINE 12** - Moves back to (0,0), motors will be turned off automatically.
+
